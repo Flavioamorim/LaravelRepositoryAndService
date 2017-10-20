@@ -1,53 +1,68 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
 
-## About Laravel
+Ex de repository e Service no Laravel
+-------------------------------------
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Primeira ação, instalar essa maravilhosa lib:**
+https://github.com/andersao/l5-repository
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+após a instalação do mesmo, a lib irá disponibilizar vários comandas no artisan, para ver basta :
 
-## Learning Laravel
+     php artisan
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+Nesse projeto, é criado uma repository através dos comandos abaixo
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+> php artisan make:entity , irá criar o model na pasta entities e irá
+> perguntar se deseja criar as demais classes, transformes, validators
 
-## Laravel Sponsors
+mas pode usar também
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+> php artisan make:repository
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
+a diferença é que o php artisan make:entity já registrou o repository criado em : 
 
-## Contributing
+> App\Providers\RepositoryServiceProvider::class
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+em Config/app.php
 
-## Security Vulnerabilities
+deve ser importada nos providers o App\Providers\RepositoryServiceProvider::class, pois assim o laravel entedera que quando for instanciado a interface, ele utilizará o repository
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+Cria uma pasta chamada Service em App, assim o namespace das classes de serviços ficarão fica App\Service;
 
-## License
+> O Service vai instanciar a classe repository "use
+> App\Repositories\TesteRepository" e retornar o resultado para o
+> controller
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+Assim a classe TesteService ficou com o construtor
+
+>     public function __construct(TesteRepository $repository)
+>     {
+>         $this->repository = $repository;
+>     }
+
+O Service deve conter os mesmos metodos do controller mas com a logica, ex:
+
+>     public function index(){
+>     	return $this->repository->all();
+>     }
+
+No controller , deve ser instaciado o serviço do mesmo:
+
+
+ex:
+
+>   use App\Services\TesteService;
+>   
+>     private $service;
+> 
+>     public function __construct(TesteService $serviceLogic )
+>     {
+>         $this->service = $serviceLogic;  
+>     }
+> 
+>     public function index()
+>     {
+>         $testes = $this->service->index();
+>         //return view("paraqualfor");
+>     }
