@@ -1,0 +1,29 @@
+
+
+php artisan make:repository TesteRepository oo o  comando make:entity 	que ja registrou o service provider em RepositoryServiceProvider, diferente do make:repository
+
+em Config/app.php
+
+deve ser importada nos providers o App\Providers\RepositoryServiceProvider::class, poois aqui esta a ligação entre a interface e o repositorio
+
+Cria uma pasta chamada Service em App, assim o namespace fica App\Service;
+
+O Service vai usar a classe repositori use App\Repositories\TesteRepository; e iniciala em seu __construct
+
+     public function __construct(TesteRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+O Service deve conter os mesmos metodos do controller mas com a logica, ex:
+    public function index(){
+    	return $this->repository->all();
+    }
+
+E o metodo index do controller:
+
+    public function index()
+    {
+        $testes = $this->service->index();
+        //return view parara
+    }
